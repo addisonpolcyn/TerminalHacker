@@ -1,6 +1,0 @@
-apache by default uses the file named index.html first
-if it is not there it will load its own page or show an error
-
-the only file needed right now is index.html which contains a button
-
-I put in a sample website just as an example of how everything works. It can be used by just changing sampleindex.html to index.html
