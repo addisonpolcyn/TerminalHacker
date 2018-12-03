@@ -1,0 +1,42 @@
+body {
+    background-color: #000;
+    padding-top: 30px;
+}
+
+#terminal {
+	font-family: monospace;
+	font-weight: bold;
+	color: #33dd88;
+	font-size: 16pt;
+}
+
+.column {
+	float: left;
+    margin-left: 20px;
+}
+
+.character {
+	cursor: pointer;
+}
+
+.character:hover {
+	background-color: #33dd88;
+	color: #112211;
+}
+
+#column2 {
+    letter-spacing: 2px;
+    padding-right: 50px;
+}
+
+#column4 {
+    letter-spacing: 2px;
+}
+
+#output {
+    z-index: 1;
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+	width: 750px;
+}
