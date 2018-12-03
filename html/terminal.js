@@ -128,6 +128,11 @@ guess = function() {
     } else {
         var count = match_count(guessed_word, password);
 
+        clear_history();
+        write_output("WELCOME USER " + username);
+        write_output("ENTER PASSWORD NOW...");
+        write_output("");
+        
         write_output("Entered: " + guessed_word);
         write_output("Access denied. " + count + " letter" + (count == 1 ? "" : "s") + " matched.");
         write_output(--attempts_remaining + " attempts remaining.");
