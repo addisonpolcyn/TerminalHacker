@@ -128,7 +128,7 @@ guess = function() {
     } else {
         var count = match_count(guessed_word, password);
 
-        write_leader_board();
+        request_leader_board();
 
         clear_history();
         write_output("WELCOME USER " + username);
@@ -181,44 +181,59 @@ wipe_game = function() {
     $("#column4").html("");
 }
 
-//helper function for formatting html spaces
-add_spaces = function(n) {
-    html = "";
-    for (var i = 0; i < n; i++) {
-        html += "&nbsp;";
-    }
-    return html;
-}
 
-write_leader_board = function() {
-    wipe_game();
-
+request_leader_board = function() {
+    //ajax request
     var http = new XMLHttpRequest();
             var url = 'http://ec2-18-218-134-15.us-east-2.compute.amazonaws.com/cgi-bin/leaderBoard.py';
             http.open('POST', url, true);
-
             //Send the proper header information along with the request
             http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
             http.onreadystatechange = function() { //Call a function when the state changes.
                 if(http.readyState == 4 && http.status == 200) {
-					var leader_table = JSON.parse(http.responseText);
-					console.log(leader_table);
-					var inner_html = "RANK"+add_spaces(2)+"USER"+add_spaces(20)+"SCORE"+"</br>";
-					var formatting = "";
-					for (var i = 1; i < num_rows; i++) {
-						row = leader_table[i-1];
-						user = row[0]
-						score = row[1]
-						if(i < 10){ formatting = add_spaces(5); } else { formatting = add_spaces(4); }
-						inner_html += (i) + formatting + user + add_spaces(2) + score +"</br>";
-					}
-					$("#column1").html(inner_html);
-
+                    var leader_table = JSON.parse(http.responseText);
+                    write_leader_board(leader_table);
                 }
             }
-			//if want to send parameters
+            //if want to send parameters
             http.send("");
+}
+
+write_leader_board = function(leaderBoard) {
+    //wipe game screen
+    wipe_game();
+
+    //write table header
+    var html_col1 = "RANK</br>";
+    var html_col2 = "&nbsp;&nbsp;USER</br>";
+    var html_col3 = "SCORE</br>";
+
+    //fill table
+    for (var i = 1; i < num_rows; i++) {
+        row = leaderBoard[i-1];
+        user = row[0]
+        score = row[1]
+
+        html_col1 += i + "</br>";
+        html_col2 += "&nbsp;&nbsp;" + append_dots(user) + "</br>";
+        html_col3 += score + "</br>";
+    }
+
+    //update screen
+    $("#column1").html(html_col1);
+    $("#column2").html(html_col2);
+    $("#column3").html(html_col3);
+}
+
+//yee
+append_dots = function(string) {
+    for(var i = 0; i < 20; i++){
+        if(string.length < 20) {
+            string += ".";
+        }
+    }
+    return string;
 }
 
 var words_written = 0;
