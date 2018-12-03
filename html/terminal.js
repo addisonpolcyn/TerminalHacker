@@ -195,27 +195,30 @@ write_leader_board = function() {
 
     var http = new XMLHttpRequest();
             var url = 'http://ec2-18-218-134-15.us-east-2.compute.amazonaws.com/cgi-bin/leaderBoard.py';
-            //var params = 'uname=' + uname + '&' + 'score=' + myScore.text;
             http.open('POST', url, true);
 
             //Send the proper header information along with the request
             http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-            http.onreadystatechange = function() {//Call a function when the state changes.
+            http.onreadystatechange = function() { //Call a function when the state changes.
                 if(http.readyState == 4 && http.status == 200) {
-                    alert(http.responseText);
+					var leader_table = JSON.parse(http.responseText);
+					console.log(leader_table);
+					var inner_html = "RANK"+add_spaces(2)+"USER"+add_spaces(20)+"SCORE"+"</br>";
+					var formatting = "";
+					for (var i = 1; i < num_rows; i++) {
+						row = leader_table[i-1];
+						user = row[0]
+						score = row[1]
+						if(i < 10){ formatting = add_spaces(5); } else { formatting = add_spaces(4); }
+						inner_html += (i) + formatting + user + add_spaces(2) + score +"</br>";
+					}
+					$("#column1").html(inner_html);
+
                 }
             }
+			//if want to send parameters
             http.send("");
-
-    var i = 1;
-    var inner_html = "RANK"+add_spaces(2)+"USER"+add_spaces(20)+"SCORE"+"</br>";
-    var formatting = "";
-    for (; i < num_rows; i++) {
-        if(i < 10){ formatting = add_spaces(5); } else { formatting = add_spaces(4); }
-        inner_html += (i) + formatting + "......................" + add_spaces(2) + "0" +"</br>";
-    }
-    $("#column1").html(inner_html);
 }
 
 var words_written = 0;
