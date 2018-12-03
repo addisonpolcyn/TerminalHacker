@@ -7,7 +7,8 @@ body {
 	font-family: monospace;
 	font-weight: bold;
 	color: #33dd88;
-	font-size: 16pt;
+    font-size: 16pt;
+    width: 100%;
 }
 
 .column {
@@ -33,10 +34,20 @@ body {
     letter-spacing: 2px;
 }
 
-#output {
+#name-input {
+    background-color: transparent;
+    border-color: transparent;
+	font-family: monospace;
+	font-weight: bold;
+	color: #33dd88;
+    font-size: 16pt;
+    outline: none;
+}
+
+.output {
     z-index: 1;
     position: absolute;
     bottom: 30px;
     left: 20px;
-	width: 750px;
+	width: 50%;
 }

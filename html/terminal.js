@@ -37,11 +37,19 @@ var garbage = [
 	"!"
 ]
 
+var introduction = "VALUT-TEC CORPORATION (TM) TERMALINK PROTOCOL";
+var username_prompt = "ENTER YOUR USERNAME BELOW";
+
 var num_cols = 12;
 var num_rows = 17;
 
-var password = "";
-var attempts_remaining = 4;
+var username, password;
+
+var max_attempts = 4;
+var attempts_remaining = max_attempts;
+
+var start_time, end_time, score;
+
 window.onload = function() {
     word_bank = shuffle_array(word_bank);
     password = word_bank[Math.round(Math.random() * 9)];
@@ -50,8 +58,15 @@ window.onload = function() {
     write_hex();
     write_puzzle();
     setup_click_handlers();
-    write_output(attempts_remaining + " attempts remaining");
-    write_output("");
+
+    write_introduction();
+    $("#name-input").focus();
+    $("#name-input").keypress(function (ev) {
+        var keycode = (ev.keyCode ? ev.keyCode : ev.which);
+        if (keycode == '13') {
+            username_entered();
+        }
+    });
 }
 
 shuffle_array = function(a) {
@@ -71,32 +86,61 @@ clear_array = function(array) {
     return array;
 }
 
+username_entered = function() {
+    $("#columns").css("display", "");
+
+    username = $("#name-input").val();
+
+    $("#name-output").css("display", "none");
+
+    write_output("WELCOME USER " + username);
+    write_output("ENTER PASSWORD NOW...");
+    write_output("");
+
+    start_time = new Date();
+}
+
 setup_click_handlers = function() {
-    $("#column2").find(".word").click(function() {
+    $("#column2").find(".word").click(guess);
+    $("#column4").find(".word").click(guess);
+}
+
+guess = function() {
+    if (attempts_remaining == 0) {
+        return;
+    }
+
+    var guessed_word = $(this).attr("data-word");
+    console.log(guessed_word == password);
+    if (guessed_word == password) {
+        end_time = new Date();
+
+        score = Math.round((end_time - start_time + (max_attempts - attempts_remaining) * 2000) / 10);
+
+        attempts_remaining = 0;
+
+        clear_history();
+        write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
+        write_output("SCORE: " + score);
+
+        $("#curtain").height('100%');
+        $("#curtain").width('100%');
+    } else {
+        var count = match_count(guessed_word, password);
+
+        write_output("Entered: " + guessed_word);
+        write_output("Access denied. " + count + " letter" + (count == 1 ? "" : "s") + " matched.");
+        write_output(--attempts_remaining + " attempts remaining.");
+        write_output("");
+
         if (attempts_remaining == 0) {
-            return;
+            clear_history();
+            write_output("ACCESS DENIED. LOCKOUT SEQUENCE INITIATED...");
+
+            $("#curtain").height('100%');
+            $("#curtain").width('100%');
         }
-
-        var guessed_word = $(this).attr("data-word");
-        if (guessed_word == password) {
-            
-        } else {
-            var count = match_count(guessed_word, password);
-
-            write_output("Entered: " + guessed_word);
-            write_output("Access denied. " + count + " letter" + (count == 1 ? "" : "s") + " matched.");
-            write_output(--attempts_remaining + " attempts remaining.");
-            write_output("");
-
-            if (attempts_remaining == 0) {
-                clear_history();
-                write_output("ACCESS DENIED. LOCKOUT SEQUENCE INITIATED...");
-
-                $("#curtain").height('100%');
-                $("#curtain").width('100%');
-            }
-        }
-    });
+    }
 }
 
 write_hex = function() {
@@ -177,9 +221,21 @@ match_count = function(guess, password) {
     return count;
 }
 
+var computer_number = 10 + Math.round(Math.random() * (99 - 10));
+write_introduction = function() {
+    var output_prefix = "vault-tec@" + computer_number + "> ";
+
+    var inner_html = "";
+    inner_html += output_prefix + introduction + "<br>";
+    inner_html += output_prefix + username_prompt + "<br>";
+    inner_html += output_prefix + "<input id=\"name-input\"></input>";
+
+    document.getElementById("name-output").innerHTML = inner_html;
+}
+
 var output_history = [];
 write_output = function(output) {
-    output = "> " + output;
+    output = "vault-tec@" + computer_number + "> " + output;
     output_history.push(output);
 
     if (output_history.length > 18) {
@@ -195,7 +251,7 @@ write_output = function(output) {
         inner_html += output_history[i];
     }
 
-    document.getElementById("output").innerHTML = inner_html;
+    document.getElementById("terminal-output").innerHTML = inner_html;
 }
 
 clear_history = function() {
