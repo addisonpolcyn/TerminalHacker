@@ -128,11 +128,13 @@ guess = function() {
     } else {
         var count = match_count(guessed_word, password);
 
+        write_leader_board();
+
         clear_history();
         write_output("WELCOME USER " + username);
         write_output("ENTER PASSWORD NOW...");
         write_output("");
-        
+ 
         write_output("Entered: " + guessed_word);
         write_output("Access denied. " + count + " letter" + (count == 1 ? "" : "s") + " matched.");
         write_output(--attempts_remaining + " attempts remaining.");
@@ -170,6 +172,50 @@ write_hex = function() {
 write_puzzle = function() {
     $("#column2").html(get_game_column_html());
     $("#column4").html(get_game_column_html());
+}
+
+wipe_game = function() {
+    $("#column1").html("");
+    $("#column2").html("");
+    $("#column3").html("");
+    $("#column4").html("");
+}
+
+//helper function for formatting html spaces
+add_spaces = function(n) {
+    html = "";
+    for (var i = 0; i < n; i++) {
+        html += "&nbsp;";
+    }
+    return html;
+}
+
+write_leader_board = function() {
+    wipe_game();
+
+    var http = new XMLHttpRequest();
+            var url = 'http://ec2-18-218-134-15.us-east-2.compute.amazonaws.com/cgi-bin/leaderBoard.py';
+            //var params = 'uname=' + uname + '&' + 'score=' + myScore.text;
+            http.open('POST', url, true);
+
+            //Send the proper header information along with the request
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                if(http.readyState == 4 && http.status == 200) {
+                    alert(http.responseText);
+                }
+            }
+            http.send("");
+
+    var i = 1;
+    var inner_html = "RANK"+add_spaces(2)+"USER"+add_spaces(20)+"SCORE"+"</br>";
+    var formatting = "";
+    for (; i < num_rows; i++) {
+        if(i < 10){ formatting = add_spaces(5); } else { formatting = add_spaces(4); }
+        inner_html += (i) + formatting + "......................" + add_spaces(2) + "0" +"</br>";
+    }
+    $("#column1").html(inner_html);
 }
 
 var words_written = 0;
