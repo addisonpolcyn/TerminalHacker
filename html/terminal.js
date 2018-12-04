@@ -44,6 +44,7 @@ var num_cols = 12;
 var num_rows = 17;
 
 var username, password;
+var rank;
 
 var max_attempts = 4;
 var attempts_remaining = max_attempts;
@@ -127,7 +128,7 @@ guess = function() {
 	
 		clear_history();
 		write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
-		write_output("WELCOME," + username + "    SCORE: " + score + "    RANK: needs improvement...");
+		write_output("WELCOME," + username + "    SCORE: " + score + "    RANK: " + rank);
    
     } else {
         var count = match_count(guessed_word, password);
@@ -238,6 +239,10 @@ write_leader_board = function(leaderBoard) {
 			row = leaderBoard[i-1];
     	    user = row[0]
         	score = row[1]
+            if(user == username) {
+                //update rank
+                rank = (i+1);    
+            }
             html_col2 += "&nbsp;&nbsp;" + append_dots(user) + "</br>";
             html_col3 += score + "</br>";
 		} else {
