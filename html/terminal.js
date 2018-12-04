@@ -269,7 +269,8 @@ append_dots = function(string) {
 
 var update_rank = function(table) {
 	for (var i = 0; i <= table.length; i++) {
-		 row = table[i];
+		//this is super fucked up rn 
+		/* row = table[i];
 		 user = row[0];
 		 if(user == username) {
                 //update rank
@@ -278,7 +279,7 @@ var update_rank = function(table) {
 				//return update_rank(leader_table);
 				var rank = i+1; 
 				return rank;
-         }
+         }*/
 	}
 }
 
