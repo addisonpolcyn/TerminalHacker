@@ -116,17 +116,10 @@ guess = function() {
         end_time = new Date();
 
         score = Math.round((end_time - start_time + (max_attempts - attempts_remaining) * 2000) / 10);
-        //testing
-        score = 9998;
-        username = "tester";
-        attempts_remaining = 0;
+        
+		attempts_remaining = 0;
 
-        //wait for database to be updated before displaying leaderboard
-        $.when(post_to_leader_board(username, score)).done(function(jqXHR){
-            //display leaderboard
-            //jqXHR - object returned by post_to_leader_board()
-            var rank = request_leader_board();
-        });
+		post_to_leader_board(username, score);
 
         //to avoid breaking shit for now
         var rank = undefined;
@@ -147,6 +140,9 @@ guess = function() {
         write_output("Access denied. " + count + " letter" + (count == 1 ? "" : "s") + " matched.");
         write_output(--attempts_remaining + " attempts remaining.");
         write_output("");
+
+		//testing 
+		//attempts_remaining++;
 
         if (attempts_remaining == 0) {
             clear_history();
@@ -189,40 +185,32 @@ wipe_game = function() {
     $("#column4").html("");
 }
 
-
-post_to_leader_board = function(uname, score) {
+update_and_post_leader_board = function(uname, score) {
     var http = new XMLHttpRequest();
         var url = 'http://ec2-18-218-134-15.us-east-2.compute.amazonaws.com/cgi-bin/updateLeaderBoard.py';
         var params = 'uname=' + uname + '&' + 'score=' +score;
         http.open('POST', url, true);
 
         //Send the proper header information along with the request
-        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+
+		var user_object = {};
+		user_object.uname = uname;
+		user_object.score = score;
+		
+		//turn object into json to send
+		var jsonData = JSON.stringify(user_object);
+
+		console.log(jsonData);
 
         http.onreadystatechange = function() {//Call a function when the state changes.
             if(http.readyState == 4 && http.status == 200) {
-					//console.log(http.responseText);
+				//post leaderboard callback
+				request_leader_board();
             }
         }
-        http.send(params);
-}
-
-function updateLeaderBoard(callback){
-    $.post('superman', { field1: "hello", field2 : "hello2"}, 
-     function(returnedData){
-        console.log(returnedData);
-    }, 'json').done(function(data) {
-      // your success code here
-    });
-}
-
-function foo (callback) {
-    updateLeaderBoard(function(data){
-        var response = data;
-        some_result = bar(response);
-        // and other stuff and
-        callback(some_result);
-    });
+		//update leaderboard
+        http.send(jsonData);
 }
 
 request_leader_board = function() {
@@ -290,6 +278,7 @@ append_dots = function(string) {
     return string;
 }
 
+//this kinda fucked up
 var update_rank = function(table) {
 	for (var i = 0; i <= table.length; i++) {
 		//this is super fucked up rn 

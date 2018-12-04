@@ -1,27 +1,28 @@
 #!/usr/bin/python
-
+import json
 import cgi
+import sys
 
 # Turn on debug mode.
 import cgitb
 cgitb.enable()
 
 # Print necessary headers.
-#send response
-print "Content-Type: text/html"
-print
+print 'Content-Type: application/json'
+print 
 
-arguments = cgi.FieldStorage()
+# some fake JSON for testing:
+#arguments =  '{ "uname":"test_bot", "score":9997 }'
+
+# get client response and parse json  
+user_obj = json.load(sys.stdin)
+     
+result = {'success':'true','message':'The Command Completed Successfully'};
+print json.dumps(result)    # or "json.dump(result, sys.stdout)"
+
 #get arguments
-args = []
-for i in arguments.keys():
-	args.append(arguments[i].value)
-
-username = args[0]
-rawscore = args[1]
-
-#parse arguments
-score = int(rawscore)
+username = user_obj["uname"]
+score = user_obj["score"]
 
 #sanitize username
 
@@ -45,7 +46,7 @@ sqlQuery="SELECT * FROM leader_board WHERE uname='" + username +"'"
 c.execute(sqlQuery)
 dbRes = c.fetchall()
 
-#print "hello"
+print "hello"
 if len(dbRes) > 0:
 	#update score if higher
 	res = dbRes[0]
