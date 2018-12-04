@@ -116,15 +116,20 @@ guess = function() {
         end_time = new Date();
 
         score = Math.round((end_time - start_time + (max_attempts - attempts_remaining) * 2000) / 10);
-
-        //update leaderboard
-        post_to_leader_board(username, score);
-
+        //testing
+        score = 9998;
+        username = "tester";
         attempts_remaining = 0;
 
+        //wait for database to be updated before displaying leaderboard
+        $.when(post_to_leader_board(username, score)).done(function(jqXHR){
+            //display leaderboard
+            //jqXHR - object returned by post_to_leader_board()
+            var rank = request_leader_board();
+        });
 
-        //display leaderboard
-		var rank = request_leader_board();
+        //to avoid breaking shit for now
+        var rank = undefined;
 		
 		clear_history();
 		write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
@@ -200,6 +205,24 @@ post_to_leader_board = function(uname, score) {
             }
         }
         http.send(params);
+}
+
+function updateLeaderBoard(callback){
+    $.post('superman', { field1: "hello", field2 : "hello2"}, 
+     function(returnedData){
+        console.log(returnedData);
+    }, 'json').done(function(data) {
+      // your success code here
+    });
+}
+
+function foo (callback) {
+    updateLeaderBoard(function(data){
+        var response = data;
+        some_result = bar(response);
+        // and other stuff and
+        callback(some_result);
+    });
 }
 
 request_leader_board = function() {
