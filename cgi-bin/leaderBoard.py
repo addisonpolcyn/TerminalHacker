@@ -22,7 +22,6 @@ c = conn.cursor()
 
 dict = []
 c.execute("SELECT * FROM leader_board ORDER BY score ASC;")
-c.commit();
 for row in c.fetchall():
 	dict.append(row)
 
