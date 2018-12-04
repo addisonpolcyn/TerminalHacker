@@ -117,22 +117,18 @@ guess = function() {
 
         score = Math.round((end_time - start_time + (max_attempts - attempts_remaining) * 2000) / 10);
 
-				//test
-				username = "test"
-				score = 99999;
-
         //update leaderboard
         post_to_leader_board(username, score);
 
         attempts_remaining = 0;
 
         //display leaderboard
-				request_leader_board();
-        
-				clear_history();
-		    write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
-				write_output("WELCOME," + username + "    SCORE: " + score + "    RANK: needs improvement...");
-       
+		request_leader_board();
+	
+		clear_history();
+		write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
+		write_output("WELCOME," + username + "    SCORE: " + score + "    RANK: needs improvement...");
+   
     } else {
         var count = match_count(guessed_word, password);
 
@@ -199,7 +195,8 @@ post_to_leader_board = function(uname, score) {
 
         http.onreadystatechange = function() {//Call a function when the state changes.
             if(http.readyState == 4 && http.status == 200) {
-                //    alert(http.responseText);
+                    alert(http.responseText);
+					console.log(http.responseText);
             }
         }
         http.send(params);

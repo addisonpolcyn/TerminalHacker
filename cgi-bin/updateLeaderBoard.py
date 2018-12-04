@@ -21,8 +21,7 @@ username = args[0]
 rawscore = args[1]
 
 #parse arguments
-score = rawscore.split(" ")
-score = int(score[1])
+score = int(rawscore)
 
 #sanitize username
 
