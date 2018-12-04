@@ -119,16 +119,17 @@ guess = function() {
 
         attempts_remaining = 0;
 
-        clear_history();
+        //get leaderboard from db
+		request_leader_board();
+        
+		clear_history();
         write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
-        write_output("SCORE: " + score);
-
-        $("#curtain").height('100%');
-        $("#curtain").width('100%');
+        //write_output("SCORE: " + score);
+		write_output("WELCOME," + username + "    SCORE: " + score + "    RANK: needs improvement...");
+        //$("#curtain").height('100%');
+        //$("#curtain").width('100%');
     } else {
         var count = match_count(guessed_word, password);
-
-        request_leader_board();
 
         clear_history();
         write_output("WELCOME USER " + username);
@@ -209,15 +210,21 @@ write_leader_board = function(leaderBoard) {
     var html_col2 = "&nbsp;&nbsp;USER</br>";
     var html_col3 = "SCORE</br>";
 
-    //fill table
-    for (var i = 1; i < num_rows; i++) {
-        row = leaderBoard[i-1];
-        user = row[0]
-        score = row[1]
+	var n = leaderBoard.length; 
 
-        html_col1 += i + "</br>";
-        html_col2 += "&nbsp;&nbsp;" + append_dots(user) + "</br>";
-        html_col3 += score + "</br>";
+    //fill table
+    for (var i = 1; i <= 20; i++) {
+		html_col1 += i + "</br>";
+        if (i < n) {
+			row = leaderBoard[i-1];
+    	    user = row[0]
+        	score = row[1]
+            html_col2 += "&nbsp;&nbsp;" + append_dots(user) + "</br>";
+            html_col3 += score + "</br>";
+		} else {
+			html_col2 += "&nbsp;&nbsp;" + append_dots("") + "</br>";
+            html_col3 += "0" + "</br>";
+		}
     }
 
     //update screen
