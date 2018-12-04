@@ -59,8 +59,6 @@ window.onload = function() {
     write_puzzle();
     setup_click_handlers();
 	
-	//set max length size for input field
-
     write_introduction();
 	$("#name-input").attr("maxlength", 20)
     $("#name-input").focus();
@@ -115,31 +113,25 @@ guess = function() {
 
     var guessed_word = $(this).attr("data-word");
     console.log(guessed_word == password);
-    //test
-	if(true) {
-	//if (guessed_word == password) {
+	
+	if (guessed_word == password) {
         end_time = new Date();
 
         score = Math.round((end_time - start_time + (max_attempts - attempts_remaining) * 2000) / 10);
-        score += 0;
 		
 		attempts_remaining = 0;
 
-		//var rank = update_and_post_leader_board(username, score);
-   
    		clear_history();
+		
 		write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
-	   	//write_output("WELCOME, " + username + "...    SCORE: " + score + "    RANK: " + rank); 
 	   	write_output("HELLO, " + username);
 		write_output("SCORE: " + score);
 
-				
+		//post and get leaderboard	
 		update_and_post_leader_board(username, score, function(rank) {
 		    // code that depends on `rank`
-	   		//write_output("WELCOME, " + username + "...    SCORE: " + score + "    RANK: " + rank); 
 			write_output("RANK: " + rank);
 		});
-   
     } else {
         var count = match_count(guessed_word, password);
 
@@ -152,9 +144,6 @@ guess = function() {
         write_output("Access denied. " + count + " letter" + (count == 1 ? "" : "s") + " matched.");
         write_output(--attempts_remaining + " attempts remaining.");
         write_output("");
-
-		//testing 
-		//attempts_remaining++;
 
         if (attempts_remaining == 0) {
             clear_history();
@@ -206,21 +195,17 @@ update_and_post_leader_board = function(uname, score, callback) {
         //Send the proper header information along with the request
         http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
 
+		//pack JSON object
 		var user_object = {};
 		user_object.uname = uname;
 		user_object.score = score;
-		
-		//turn object into json to send
 		var jsonData = JSON.stringify(user_object);
 
-		console.log(jsonData);
-
-        http.onreadystatechange = function() {//Call a function when the state changes.
+        http.onreadystatechange = function() { //Call a function when the state changes.
             if(http.readyState == 4 && http.status == 200) {
 				//post leaderboard callback
 				request_leader_board(function(rank) {
 				    // code that depends on `result`
-					//console.log("lvl4: rnak",rank);
 					callback(rank);
 				});
             }
@@ -242,13 +227,10 @@ request_leader_board = function(callback) {
                 var leader_table = JSON.parse(http.responseText);
                 var rank = write_leader_board(leader_table);
 				callback(rank);
-				//console.log("lvl3: rnak",rank);
 			}
         }
         //if want to send parameters
         http.send("");
-		//return rank;
-		//return -1;
 }
 
 write_leader_board = function(leaderBoard) {
@@ -261,13 +243,8 @@ write_leader_board = function(leaderBoard) {
     var html_col3 = "SCORE</br>";
 
 	var rank = update_rank(leaderBoard);
-	console.log("lvl2: rnak",rank);
-
 	var n = leaderBoard.length; 
     
-	console.log("dumping board");
-	console.log(leaderBoard);
-
 	//fill table
     for (var i = 0; i < 20; i++) {
 		html_col1 += i+1 + "</br>";
@@ -287,7 +264,6 @@ write_leader_board = function(leaderBoard) {
     $("#column1").html(html_col1);
     $("#column2").html(html_col2);
     $("#column3").html(html_col3);
-	
 	return rank;
 }
 
@@ -301,25 +277,15 @@ append_dots = function(string) {
     return string;
 }
 
-//this kinda fucked up
 var update_rank = function(table) {
 	for (var i = 0; i <= table.length; i++) {
-		//this is super fucked up rn 
 		 row = table[i];
-		 //user = row[0];
 		 user_score = row[1];
 		 if(user_score == score) {
                 //update rank
-				console.log("changed rank!!!");
-				//rank = 20;
-				//return update_rank(leader_table);
-				var rank = i+1; 
-				console.log(rank);
-				return rank;
+				return i+1;
         }
 	}
-	//var rank = 9;
-	//return rank;
 }
 
 var words_written = 0;
