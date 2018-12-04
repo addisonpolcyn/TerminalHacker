@@ -112,21 +112,26 @@ guess = function() {
 
     var guessed_word = $(this).attr("data-word");
     console.log(guessed_word == password);
-    if (guessed_word == password) {
+    //test
+	if(true) {
+	//if (guessed_word == password) {
         end_time = new Date();
 
         score = Math.round((end_time - start_time + (max_attempts - attempts_remaining) * 2000) / 10);
-        
+        score += 3000;
+		
 		attempts_remaining = 0;
 
-		update_and_post_leader_board(username, score);
-        
-		//to avoid breaking shit for now
-        var rank = undefined;
-		
-		clear_history();
+		var rank = update_and_post_leader_board(username, score);
+   
+   		clear_history();
 		write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
-		write_output("WELCOME, " + username + "...    SCORE: " + score + "    RANK: " + rank);
+	   	//write_output("WELCOME, " + username + "...    SCORE: " + score + "    RANK: " + rank); 
+				
+		update_and_post_leader_board(username, score, function(rank) {
+		    // code that depends on `rank`
+	   		write_output("WELCOME, " + username + "...    SCORE: " + score + "    RANK: " + rank); 
+		});
    
     } else {
         var count = match_count(guessed_word, password);
@@ -185,7 +190,7 @@ wipe_game = function() {
     $("#column4").html("");
 }
 
-update_and_post_leader_board = function(uname, score) {
+update_and_post_leader_board = function(uname, score, callback) {
     var http = new XMLHttpRequest();
         var url = 'http://ec2-18-218-134-15.us-east-2.compute.amazonaws.com/cgi-bin/updateLeaderBoard.py';
         var params = 'uname=' + uname + '&' + 'score=' +score;
@@ -206,14 +211,18 @@ update_and_post_leader_board = function(uname, score) {
         http.onreadystatechange = function() {//Call a function when the state changes.
             if(http.readyState == 4 && http.status == 200) {
 				//post leaderboard callback
-				request_leader_board();
+				request_leader_board(function(rank) {
+				    // code that depends on `result`
+					//console.log("lvl4: rnak",rank);
+					callback(rank);
+				});
             }
         }
 		//update leaderboard
         http.send(jsonData);
 }
 
-request_leader_board = function() {
+request_leader_board = function(callback) {
     //ajax request
     var http = new XMLHttpRequest();
         var url = 'http://ec2-18-218-134-15.us-east-2.compute.amazonaws.com/cgi-bin/leaderBoard.py';
@@ -225,11 +234,13 @@ request_leader_board = function() {
             if(http.readyState == 4 && http.status == 200) {
                 var leader_table = JSON.parse(http.responseText);
                 var rank = write_leader_board(leader_table);
-				return rank;
+				callback(rank);
+				//console.log("lvl3: rnak",rank);
 			}
         }
         //if want to send parameters
         http.send("");
+		//return rank;
 		//return -1;
 }
 
@@ -243,6 +254,7 @@ write_leader_board = function(leaderBoard) {
     var html_col3 = "SCORE</br>";
 
 	var rank = update_rank(leaderBoard);
+	console.log("lvl2: rnak",rank);
 
 	var n = leaderBoard.length; 
     //fill table
@@ -282,7 +294,7 @@ append_dots = function(string) {
 var update_rank = function(table) {
 	for (var i = 0; i <= table.length; i++) {
 		//this is super fucked up rn 
-		/* row = table[i];
+		 row = table[i];
 		 user = row[0];
 		 if(user == username) {
                 //update rank
@@ -290,9 +302,12 @@ var update_rank = function(table) {
 				//rank = 20;
 				//return update_rank(leader_table);
 				var rank = i+1; 
+				console.log(rank);
 				return rank;
-         }*/
+        }
 	}
+	//var rank = 9;
+	//return rank;
 }
 
 var words_written = 0;
