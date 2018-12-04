@@ -117,17 +117,22 @@ guess = function() {
 
         score = Math.round((end_time - start_time + (max_attempts - attempts_remaining) * 2000) / 10);
 
+				//test
+				username = "test"
+				score = 99999;
+
+        //update leaderboard
+        post_to_leader_board(username, score);
+
         attempts_remaining = 0;
 
-        //get leaderboard from db
-		request_leader_board();
+        //display leaderboard
+				request_leader_board();
         
-		clear_history();
-        write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
-        //write_output("SCORE: " + score);
-		write_output("WELCOME," + username + "    SCORE: " + score + "    RANK: needs improvement...");
-        //$("#curtain").height('100%');
-        //$("#curtain").width('100%');
+				clear_history();
+		    write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
+				write_output("WELCOME," + username + "    SCORE: " + score + "    RANK: needs improvement...");
+       
     } else {
         var count = match_count(guessed_word, password);
 
@@ -183,22 +188,39 @@ wipe_game = function() {
 }
 
 
+post_to_leader_board = function(uname, score) {
+    var http = new XMLHttpRequest();
+        var url = 'http://ec2-18-218-134-15.us-east-2.compute.amazonaws.com/cgi-bin/updateLeaderBoard.py';
+        var params = 'uname=' + uname + '&' + 'score=' +score;
+        http.open('POST', url, true);
+
+        //Send the proper header information along with the request
+        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                //    alert(http.responseText);
+            }
+        }
+        http.send(params);
+}
+
 request_leader_board = function() {
     //ajax request
     var http = new XMLHttpRequest();
-            var url = 'http://ec2-18-218-134-15.us-east-2.compute.amazonaws.com/cgi-bin/leaderBoard.py';
-            http.open('POST', url, true);
-            //Send the proper header information along with the request
-            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        var url = 'http://ec2-18-218-134-15.us-east-2.compute.amazonaws.com/cgi-bin/leaderBoard.py';
+        http.open('POST', url, true);
+        //Send the proper header information along with the request
+        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-            http.onreadystatechange = function() { //Call a function when the state changes.
-                if(http.readyState == 4 && http.status == 200) {
-                    var leader_table = JSON.parse(http.responseText);
-                    write_leader_board(leader_table);
-                }
+        http.onreadystatechange = function() { //Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                var leader_table = JSON.parse(http.responseText);
+                write_leader_board(leader_table);
             }
-            //if want to send parameters
-            http.send("");
+        }
+        //if want to send parameters
+        http.send("");
 }
 
 write_leader_board = function(leaderBoard) {
