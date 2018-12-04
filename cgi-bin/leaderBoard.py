@@ -5,7 +5,7 @@ import cgitb
 cgitb.enable()
 
 # Print necessary headers.
-print "Content-Type: text/html"
+print 'Content-Type: application/json'
 print
 
 # Connect to the database.
@@ -43,7 +43,7 @@ import json
 
 dict = []
 #leaderBoard_dict = {}
-c.execute("SELECT * FROM leader_board ORDER BY score DESC;")
+c.execute("SELECT * FROM leader_board ORDER BY score ASC;")
 for row in c.fetchall():
 	#uname = row[0]
 	#score = str(row[1])

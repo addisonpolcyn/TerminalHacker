@@ -58,8 +58,11 @@ window.onload = function() {
     write_hex();
     write_puzzle();
     setup_click_handlers();
+	
+	//set max length size for input field
 
     write_introduction();
+	$("#name-input").attr("maxlength", 20)
     $("#name-input").focus();
     $("#name-input").keypress(function (ev) {
         var keycode = (ev.keyCode ? ev.keyCode : ev.which);
@@ -91,9 +94,9 @@ username_entered = function() {
 
     username = $("#name-input").val();
 
-    $("#name-output").css("display", "none");
-
-    write_output("WELCOME USER " + username);
+	$("#name-output").css("display", "none");
+    
+	write_output("WELCOME USER " + username);
     write_output("ENTER PASSWORD NOW...");
     write_output("");
 
@@ -118,19 +121,23 @@ guess = function() {
         end_time = new Date();
 
         score = Math.round((end_time - start_time + (max_attempts - attempts_remaining) * 2000) / 10);
-        score += 3000;
+        score += 0;
 		
 		attempts_remaining = 0;
 
-		var rank = update_and_post_leader_board(username, score);
+		//var rank = update_and_post_leader_board(username, score);
    
    		clear_history();
 		write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
 	   	//write_output("WELCOME, " + username + "...    SCORE: " + score + "    RANK: " + rank); 
+	   	write_output("HELLO, " + username);
+		write_output("SCORE: " + score);
+
 				
 		update_and_post_leader_board(username, score, function(rank) {
 		    // code that depends on `rank`
-	   		write_output("WELCOME, " + username + "...    SCORE: " + score + "    RANK: " + rank); 
+	   		//write_output("WELCOME, " + username + "...    SCORE: " + score + "    RANK: " + rank); 
+			write_output("RANK: " + rank);
 		});
    
     } else {
@@ -257,11 +264,15 @@ write_leader_board = function(leaderBoard) {
 	console.log("lvl2: rnak",rank);
 
 	var n = leaderBoard.length; 
-    //fill table
-    for (var i = 1; i <= 20; i++) {
-		html_col1 += i + "</br>";
+    
+	console.log("dumping board");
+	console.log(leaderBoard);
+
+	//fill table
+    for (var i = 0; i < 20; i++) {
+		html_col1 += i+1 + "</br>";
         if (i < n) {
-			row = leaderBoard[i-1];
+			row = leaderBoard[i];
     	    user = row[0]
         	score = row[1]
             html_col2 += "&nbsp;&nbsp;" + append_dots(user) + "</br>";
@@ -295,8 +306,9 @@ var update_rank = function(table) {
 	for (var i = 0; i <= table.length; i++) {
 		//this is super fucked up rn 
 		 row = table[i];
-		 user = row[0];
-		 if(user == username) {
+		 //user = row[0];
+		 user_score = row[1];
+		 if(user_score == score) {
                 //update rank
 				console.log("changed rank!!!");
 				//rank = 20;

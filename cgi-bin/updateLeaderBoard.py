@@ -18,7 +18,7 @@ print
 user_obj = json.load(sys.stdin)
      
 result = {'success':'true','message':'The Command Completed Successfully'};
-print json.dumps(result)    # or "json.dump(result, sys.stdout)"
+#print json.dumps(result)    # or "json.dump(result, sys.stdout)"
 
 #get arguments
 username = user_obj["uname"]
@@ -43,21 +43,28 @@ c = conn.cursor()
 
 # Print the contents of the database.
 sqlQuery="SELECT * FROM leader_board WHERE uname='" + username +"'"
-c.execute(sqlQuery)
-dbRes = c.fetchall()
+#c.execute(sqlQuery)
+#dbRes = c.fetchall()
 
-print "hello"
+#sqlUpdate = "UPDATE leader_board SET score="+str(score)+" WHERE uname='"+username+"'"
+sqlInsert = "INSERT INTO leader_board VALUES ('"+username+"', "+str(score)+")"
+c.execute(sqlInsert)
+conn.commit()
+
+'''
+#print "hello"
 if len(dbRes) > 0:
 	#update score if higher
 	res = dbRes[0]
 	high_score = res[1]
 	
 	if high_score < score:
-		sqlUpdate = "UPDATE leader_board SET score="+str(score)+" WHERE uname='"+username+"'"
-		c.execute(sqlUpdate)
-		conn.commit()
+		#sqlUpdate = "UPDATE leader_board SET score="+str(score)+" WHERE uname='"+username+"'"
+		#c.execute(sqlUpdate)
+		#conn.commit()
 else :
 	#insert uname and score into table
 	sqlInsert = "INSERT INTO leader_board VALUES ('"+username+"', "+str(score)+")"
 	c.execute(sqlInsert)
 	conn.commit()
+'''
