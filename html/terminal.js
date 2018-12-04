@@ -119,9 +119,9 @@ guess = function() {
         
 		attempts_remaining = 0;
 
-		post_to_leader_board(username, score);
-
-        //to avoid breaking shit for now
+		update_and_post_leader_board(username, score);
+        
+		//to avoid breaking shit for now
         var rank = undefined;
 		
 		clear_history();
