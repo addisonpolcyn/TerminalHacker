@@ -44,7 +44,8 @@ c = conn.cursor()
 sqlQuery="SELECT * FROM leader_board WHERE uname='" + username +"'"
 c.execute(sqlQuery)
 dbRes = c.fetchall()
-print "hello"
+
+#print "hello"
 if len(dbRes) > 0:
 	#update score if higher
 	res = dbRes[0]

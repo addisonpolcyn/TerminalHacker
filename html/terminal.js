@@ -44,7 +44,6 @@ var num_cols = 12;
 var num_rows = 17;
 
 var username, password;
-var rank;
 
 var max_attempts = 4;
 var attempts_remaining = max_attempts;
@@ -123,12 +122,13 @@ guess = function() {
 
         attempts_remaining = 0;
 
+
         //display leaderboard
-		request_leader_board();
-	
+		var rank = request_leader_board();
+		
 		clear_history();
 		write_output("ACCESS GRANTED. 04 08 15 16 23 42...");
-		write_output("WELCOME," + username + "    SCORE: " + score + "    RANK: " + rank);
+		write_output("WELCOME, " + username + "...    SCORE: " + score + "    RANK: " + rank);
    
     } else {
         var count = match_count(guessed_word, password);
@@ -196,8 +196,7 @@ post_to_leader_board = function(uname, score) {
 
         http.onreadystatechange = function() {//Call a function when the state changes.
             if(http.readyState == 4 && http.status == 200) {
-                    alert(http.responseText);
-					console.log(http.responseText);
+					//console.log(http.responseText);
             }
         }
         http.send(params);
@@ -214,11 +213,13 @@ request_leader_board = function() {
         http.onreadystatechange = function() { //Call a function when the state changes.
             if(http.readyState == 4 && http.status == 200) {
                 var leader_table = JSON.parse(http.responseText);
-                write_leader_board(leader_table);
-            }
+                var rank = write_leader_board(leader_table);
+				return rank;
+			}
         }
         //if want to send parameters
         http.send("");
+		//return -1;
 }
 
 write_leader_board = function(leaderBoard) {
@@ -230,8 +231,9 @@ write_leader_board = function(leaderBoard) {
     var html_col2 = "&nbsp;&nbsp;USER</br>";
     var html_col3 = "SCORE</br>";
 
-	var n = leaderBoard.length; 
+	var rank = update_rank(leaderBoard);
 
+	var n = leaderBoard.length; 
     //fill table
     for (var i = 1; i <= 20; i++) {
 		html_col1 += i + "</br>";
@@ -239,10 +241,6 @@ write_leader_board = function(leaderBoard) {
 			row = leaderBoard[i-1];
     	    user = row[0]
         	score = row[1]
-            if(user == username) {
-                //update rank
-                rank = (i+1);    
-            }
             html_col2 += "&nbsp;&nbsp;" + append_dots(user) + "</br>";
             html_col3 += score + "</br>";
 		} else {
@@ -255,6 +253,8 @@ write_leader_board = function(leaderBoard) {
     $("#column1").html(html_col1);
     $("#column2").html(html_col2);
     $("#column3").html(html_col3);
+	
+	return rank;
 }
 
 //yee
@@ -265,6 +265,21 @@ append_dots = function(string) {
         }
     }
     return string;
+}
+
+var update_rank = function(table) {
+	for (var i = 0; i <= table.length; i++) {
+		 row = table[i];
+		 user = row[0];
+		 if(user == username) {
+                //update rank
+				console.log("changed rank!!!");
+				//rank = 20;
+				//return update_rank(leader_table);
+				var rank = i+1; 
+				return rank;
+         }
+	}
 }
 
 var words_written = 0;
