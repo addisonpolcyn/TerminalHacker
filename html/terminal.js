@@ -38,7 +38,7 @@ var garbage = [
 ]
 
 var introduction = "VALUT-TEC CORPORATION (TM) TERMALINK PROTOCOL";
-var username_prompt = "ENTER YOUR USERNAME BELOW";
+var username_prompt = "ENTER YOUR USERNAME BELOW OR TYPE HELP FOR USAGE";
 
 var num_cols = 12;
 var num_rows = 17;
@@ -88,17 +88,44 @@ clear_array = function(array) {
 }
 
 username_entered = function() {
-    $("#columns").css("display", "");
 
     username = $("#name-input").val();
+	var input = username.toLowerCase();
 
-	$("#name-output").css("display", "none");
-    
-	write_output("WELCOME USER " + username);
-    write_output("ENTER PASSWORD NOW...");
-    write_output("");
+	if (input == "help") {
+		$('#name-input').val('');
+		
+		write_help();
+    	$("#name-input").focus();
+		$("#name-input").keypress(function (ev) {
+			var keycode = (ev.keyCode ? ev.keyCode : ev.which);
+			if (keycode == '13') {
+				username_entered();
+			}
+		});
 
-    start_time = new Date();
+	} else if(input.indexOf(" ") >= 0 || input.indexOf(";") >= 0 || input.indexOf('\t') >= 0) { 
+		$('#name-input').val('');
+		
+		write_err_message();
+    	$("#name-input").focus();
+		$("#name-input").keypress(function (ev) {
+			var keycode = (ev.keyCode ? ev.keyCode : ev.which);
+			if (keycode == '13') {
+				username_entered();
+			}
+		});
+	
+	} else {
+    	$("#columns").css("display", "");
+		$("#name-output").css("display", "none");
+		
+		write_output("WELCOME USER " + username);
+		write_output("ENTER PASSWORD NOW...");
+		write_output("");
+
+		start_time = new Date();
+	}
 }
 
 setup_click_handlers = function() {
@@ -348,6 +375,30 @@ write_introduction = function() {
 
     var inner_html = "";
     inner_html += output_prefix + introduction + "<br>";
+    inner_html += output_prefix + username_prompt + "<br>";
+    inner_html += output_prefix + "<input id=\"name-input\"></input>";
+
+    document.getElementById("name-output").innerHTML = inner_html;
+}
+
+write_help = function() {
+    document.getElementById("name-output").innerHTML = "";
+  	var output_prefix = "vault-tec@" + computer_number + "> ";
+
+    var inner_html = "";
+    inner_html += output_prefix + username + "<br>ENTER THE USERNAME AND CRACK THE PASSWORD.<br>SELECT A WORD IN THE HEX TO CRACK IT.<br>THE PROGRAM WILL OUTPUT THE CORRECT NUMBER OF LETTERS MATCHED.<br>THE LETTERS ARE POSITION DEPENDENT." + "<br><br>";
+    inner_html += output_prefix + username_prompt + "<br>";
+    inner_html += output_prefix + "<input id=\"name-input\"></input>";
+
+    document.getElementById("name-output").innerHTML = inner_html;
+}
+
+write_err_message = function() {
+    document.getElementById("name-output").innerHTML = "";
+  	var output_prefix = "vault-tec@" + computer_number + "> ";
+
+    var inner_html = "";
+    inner_html += output_prefix + username + "<br>USERNAMES DO NOT CONTAIN WHITESPACE OR SPECIAL SOME CHARACTERS.<br><br>";
     inner_html += output_prefix + username_prompt + "<br>";
     inner_html += output_prefix + "<input id=\"name-input\"></input>";
 
